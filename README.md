@@ -9,7 +9,7 @@
 
 This project consists of a **graphical interface application** and a **model training script** developed in Python to predict **health insurance costs** based on user-provided personal information such as age, BMI, smoking status, etc.
 
-The app is designed for **user-friendliness**, **modularity**, and **data transparency**, and includes advanced features like **real-time predictions**, **PDF export**, and **graphical visualizations**.
+The app is designed for **user-friendliness**, **modularity**, and **data transparency**, and includes advanced features like **real-time predictions**, **PDF export**, **theme switching**, and **graphical visualizations**.
 
 ---
 
@@ -18,7 +18,7 @@ The app is designed for **user-friendliness**, **modularity**, and **data transp
 ### ✅ GUI Application (`gui_predictor.py`)
 
 - Built with **Tkinter** and **TTK widgets** for modern styling
-- Soft yellow themed background and professional layout
+- Soft yellow themed background with optional **Dark Mode toggle**
 - Input fields:
   - Age
   - BMI
@@ -26,15 +26,17 @@ The app is designed for **user-friendliness**, **modularity**, and **data transp
   - Sex (male/female)
   - Smoker (yes/no)
   - Region (northeast/northwest/southeast/southwest)
-- Predict button to calculate insurance cost using a **trained regression model**
-- **Popup output** with predicted result
-- **CSV logging**: Automatically stores all prediction records in `user_predictions.csv`
-- **"Last Prediction"** shows the latest predicted data from CSV
-- **"Show Chart"** visualizes historical prediction trends with Matplotlib
-- **"Save as PDF"** feature to export the most recent prediction with a user-chosen filename
-- **"Open CSV"** to launch the full prediction history file
-- **"Clear"** and **"Exit"** controls
-- **Logo support** (`logo.png`) for branded appearance
+- **Buttons and Functions**:
+  - 🧠 **Predict**: Predict insurance cost using the trained regression model
+  - 📋 **Clear**: Reset all input fields
+  - ❌ **Exit**: Close the app
+  - 📂 **Open CSV**: Open the prediction history file
+  - 🕒 **Last Prediction**: Show the most recent prediction in a popup
+  - 📊 **Show Chart**: Visualize prediction history using Matplotlib
+  - 🧾 **Save as PDF**: Export the last prediction to a neatly formatted PDF file
+  - 🌙 **Toggle Theme**: Switch between Light and Dark modes for improved user experience
+- **CSV logging**: All predictions are saved to `user_predictions.csv`
+- **Logo support** (`logo.png`) for custom branding
 
 ---
 
@@ -55,15 +57,16 @@ The app is designed for **user-friendliness**, **modularity**, and **data transp
 
 ## 💾 Files in the Project
 
-| Filename | Description |
-|----------|-------------|
-| `gui_predictor.py` | Main GUI application for predictions |
-| `train_model.py` | Model training script using Linear Regression |
-| `insurance.csv` | Dataset used for training |
-| `insurance_model.pkl` | Saved model file used by GUI |
-| `user_predictions.csv` | Auto-generated CSV logging user predictions |
-| `logo.png` | (Optional) Image displayed in the GUI header |
-| `requirements.txt` | List of dependencies (if created manually) |
+| Filename              | Description                                           |
+|-----------------------|-------------------------------------------------------|
+| `gui_predictor.py`    | Main GUI application for predictions                  |
+| `train_model.py`      | Model training script using Linear Regression         |
+| `insurance.csv`       | Dataset used for training                             |
+| `insurance_model.pkl` | Saved model file used by GUI                          |
+| `user_predictions.csv`| Auto-generated CSV logging user predictions           |
+| `logo.png`            | (Optional) Image displayed in the GUI header          |
+| `README.md`           | This file                                             |
+| `requirements.txt`    | List of Python dependencies (optional but recommended)|
 
 ---
 
@@ -78,11 +81,16 @@ After making a prediction, users can click **“Save as PDF”** and generate a 
 
 ---
 
+## 🌓 Light & Dark Theme
+
+You can switch between a light yellow theme and a dark background using the **"Toggle Theme"** button in the GUI.  
+This improves accessibility and user comfort, especially in low-light environments.
+
+---
+
 ## 🛠️ Dependencies
 
 Make sure to install the following libraries:
 
 ```bash
 pip install pandas matplotlib joblib reportlab scikit-learn
-
-
