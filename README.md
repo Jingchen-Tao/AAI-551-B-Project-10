@@ -1,32 +1,88 @@
-# Author: Jingchen Tao, Olin Dsouza , Smit Minekumar Desai
-# Date: 2025/5/2
+# Health Insurance Cost Predictor
 
-#File description:
-#This is a graphical interface program built on Tkinter, users can enter personal information (such as age, BMI, number of children,
-# gender, whether they smoke, location) in the interface, click the "Predict" button, the program will call the pre-trained model to make a cost prediction,
-# and display the results in a pop-up window. At the same time, all forecast records are automatically saved to a CSV file.
-# The interface also provides functions such as clearing inputs, exiting programs, opening history, viewing the latest forecast results,
-# and displaying historical cost forecast changes in charts and graphs, improving user interactivity and data visualization experience.
+**Author**: Jingchen Tao, Olin Dsouza, Smit Minekumar Desai  
+**Date**: 2025/05/02
 
-#improvement:The original interface had simple predictions,
-# but now the version not only beautifies the interface (with TTK controls and a soft yellow background),
-# but also adds useful features such as clearing inputs, exiting with one click,
-# opening history files, displaying the results of the most recent predictions,and more.
-# In addition, the program has added a new visualization function for historical forecast data (plotting using matplotlib),
-# which further improves the user experience and presentation.
-# All predictions are automatically written to a CSV file and negative values are automatically avoided,
-# making the system more robust and useful.
+---
 
-#File description:
-#This is a Python script for training a prediction model for health insurance costs. It reads data containing age, gender,
-# BMI, smoking, region, and other information from insurance.csv files, preprocesses the data
-# (such as monothermal coding of categorical variables such as gender and region), constructs features and labels, and trains them with a linear regression model.
-# After the training is complete, the script outputs the performance evaluation metrics of the model (including the R² score and mean square error)
-# and saves the model as a insurance_model.pkl file for API program calling.
+## 📌 Project Overview
 
-#improvement:This improvement adds model evaluation metrics (R² and Mean Square Error (MSE) to the model training script,
-# so that the model performance is no longer in the training and use stage, but has basic explanatory and credibility verification.
-# At the same time, the categorical variables in the original data are numerized through One-Hot encoding,
-# which effectively avoids the trap of dummy variables and enhances the expressive ability of the model. Finally,
-# the model is persisted and saved using joblib,which is convenient for GUI modules to be called directly,
-# which improves the modularity and reusability of the project.
+This project consists of a **graphical interface application** and a **model training script** developed in Python to predict **health insurance costs** based on user-provided personal information such as age, BMI, smoking status, etc.
+
+The app is designed for **user-friendliness**, **modularity**, and **data transparency**, and includes advanced features like **real-time predictions**, **PDF export**, and **graphical visualizations**.
+
+---
+
+## 🎯 Features
+
+### ✅ GUI Application (`gui_predictor.py`)
+
+- Built with **Tkinter** and **TTK widgets** for modern styling
+- Soft yellow themed background and professional layout
+- Input fields:
+  - Age
+  - BMI
+  - Number of Children
+  - Sex (male/female)
+  - Smoker (yes/no)
+  - Region (northeast/northwest/southeast/southwest)
+- Predict button to calculate insurance cost using a **trained regression model**
+- **Popup output** with predicted result
+- **CSV logging**: Automatically stores all prediction records in `user_predictions.csv`
+- **"Last Prediction"** shows the latest predicted data from CSV
+- **"Show Chart"** visualizes historical prediction trends with Matplotlib
+- **"Save as PDF"** feature to export the most recent prediction with a user-chosen filename
+- **"Open CSV"** to launch the full prediction history file
+- **"Clear"** and **"Exit"** controls
+- **Logo support** (`logo.png`) for branded appearance
+
+---
+
+### ✅ Model Training Script (`train_model.py` or similar)
+
+- Reads and processes data from `insurance.csv`
+- Handles:
+  - One-hot encoding of categorical variables (sex, smoker, region)
+  - Splits into features and target labels (`charges`)
+- Trains a **Linear Regression model**
+- Outputs:
+  - **R² Score**
+  - **Mean Squared Error (MSE)**
+- Saves the trained model as `insurance_model.pkl` using `joblib`
+- Designed for reuse in GUI-based prediction apps
+
+---
+
+## 💾 Files in the Project
+
+| Filename | Description |
+|----------|-------------|
+| `gui_predictor.py` | Main GUI application for predictions |
+| `train_model.py` | Model training script using Linear Regression |
+| `insurance.csv` | Dataset used for training |
+| `insurance_model.pkl` | Saved model file used by GUI |
+| `user_predictions.csv` | Auto-generated CSV logging user predictions |
+| `logo.png` | (Optional) Image displayed in the GUI header |
+| `requirements.txt` | List of dependencies (if created manually) |
+
+---
+
+## 🖼️ Sample Output (PDF)
+
+After making a prediction, users can click **“Save as PDF”** and generate a file containing:
+
+- Age, BMI, Sex
+- Smoker status, Region
+- Predicted Insurance Cost
+- Exported as a neat, readable PDF
+
+---
+
+## 🛠️ Dependencies
+
+Make sure to install the following libraries:
+
+```bash
+pip install pandas matplotlib joblib reportlab scikit-learn
+
+
