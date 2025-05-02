@@ -1,6 +1,6 @@
 # Health Insurance Cost Predictor
 
-**Author**: Jingchen Tao, Olin Dsouza, Smit Minekumar Desai  
+**Author**: Jingchen Tao, Olin Dsouza, Smit  Desai  
 **Date**: 2025/05/02
 
 ---
