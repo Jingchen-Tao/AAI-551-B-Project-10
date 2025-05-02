@@ -21,3 +21,7 @@ def testPredictionIsPositive():
   Ts = format.input(28,24.5,1,'male','no','northeast')
   result = model.predict(Ts)[0]
   assert result > 0, "Prediction shold be positive" 
+def testPredictionType():
+  Ts = format.input(50,30.5,0,'female','yes','northwest')
+  result = model.predict(Ts)[0]
+  assert isinstance(prediction, float), "prediction should be a float"
