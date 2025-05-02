@@ -17,3 +17,7 @@ def creatInput(age, bmi, children, sex, smoker, region):
   "region_southwest" : [1 if region == 'southwest' else 0],
   "region_southeast" : [1 if region == 'southeast' else 0],
   ) return pd.DataFrame
+def testPredictionIsPositive():
+  Ts = format.input(28,24.5,1,'male','no','northeast')
+  result = model.predict(Ts)[0]
+  assert result > 0, "Prediction shold be positive" 
