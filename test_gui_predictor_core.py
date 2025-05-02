@@ -25,3 +25,18 @@ def testPredictionType():
   Ts = format.input(50,30.5,0,'female','yes','northwest')
   result = model.predict(Ts)[0]
   assert isinstance(prediction, float), "prediction should be a float"
+ def testCsvWriteAndRead():
+   file_name = "test_preductions.csv"
+   test_data = [30, "male", 22.0, 0, "no", "northwest", "3200.45"]
+   with open(file_name, 'w', newline = '') as file:
+     writer = csv.writer(file)
+     writer.writerow(["Age", "BMI", "Children", "Sex", "Smoker", "Region", "Prediction Cost"])
+     writer.writerow(test_data)
+   with open(file_name,'r') as file:
+     reader = csv.reader(file)
+     lines = list(reader)
+   assert lines[1][0] == "30"
+   assert lines[1][6] == "3200.45"
+   os.remove(file_name)
+
+
