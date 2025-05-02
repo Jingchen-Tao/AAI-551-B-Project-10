@@ -38,5 +38,12 @@ def testPredictionType():
    assert lines[1][0] == "30"
    assert lines[1][6] == "3200.45"
    os.remove(file_name)
-
+def testInputFormatColumn():
+  Ts = format.input(33,29.4,2,'male','yes','southwest')
+    expected_columns = [
+      'age', 'bmi', 'children',
+      'sex_male','smoker_yes',
+      'region_northwest','region_southwest','region_southeast'
+    ]
+  assert list(Ts.columns) == expected_columns
 
