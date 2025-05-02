@@ -1,0 +1,15 @@
+Age,Sex,BMI,Children,Smoker,Region,Predicted Cost
+11,male,11,1,no,northeast,3242
+11,male,11,111,no,northeast,41790.89
+18,male,11,2,no,northeast,2765.67
+11,male,11,11,no,northeast,736.99328762072
+11,male,11,11,no,northeast,736.99328762072
+11,male,11,11,no,northeast,736.99
+11,male,11,1,no,northeast,4989.78
+11,male,11,1,no,northeast,4989.78
+11,male,11,1,no,northeast,4989.78
+1,male,1,0,no,northeast,11355.74
+18,male,24,1,no,northeast,1191.25
+11,male,21.0,1,no,northeast,1618.86
+21,male,21.0,1,no,northeast,950.90
+32,male,22.0,2,no,northeast,4540.01

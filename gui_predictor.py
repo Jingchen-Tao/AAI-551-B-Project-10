@@ -1,24 +1,52 @@
-#(author):Jenchen Tao CWID: 20030105
-#(author):Olin Dsouza :20033076
-#(author):Smit Desai :20035929
-#2025/4/10
-#The program is a health insurance cost predictor where users can enter personal information
-# and the program predicts insurance costs based on a trained linear regression model.
-#The information entered includes: age, BMI, number of children, gender, smoking status, and region.
-# The prediction results will be displayed on the interface and saved to a CSV file.
-
-import tkinter as tk
-from tkinter import messagebox
-import pandas as pd
-import joblib
-import csv
+# Author: Jingchen Tao, Olin Dsouza , Smit Minekumar Desai
+# Date: 2025/5/2
 
 
-model = joblib.load("insurance_model.pkl")
+#File description:
+#This is a graphical interface program built on Tkinter, users can enter personal information (such as age, BMI, number of children,
+# gender, whether they smoke, location) in the interface, click the "Predict" button, the program will call the pre-trained model to make a cost prediction,
+# and display the results in a pop-up window. At the same time, all forecast records are automatically saved to a CSV file.
+# The interface also provides functions such as clearing inputs, exiting programs, opening history, viewing the latest forecast results,
+# and displaying historical cost forecast changes in charts and graphs, improving user interactivity and data visualization experience.
 
 
+
+#improvement:The original interface had simple predictions,
+# but now the version not only beautifies the interface (with TTK controls and a soft yellow background),
+# but also adds useful features such as clearing inputs, exiting with one click,
+# opening history files, displaying the results of the most recent predictions,and more.
+# In addition, the program has added a new visualization function for historical forecast data (plotting using matplotlib),
+# which further improves the user experience and presentation.
+# All predictions are automatically written to a CSV file and negative values are automatically avoided,
+# making the system more robust and useful.
+
+# Import GUI libraries and data tools
+import tkinter as tk                      # GUI main module
+from tkinter import messagebox, ttk       # Popup messages and styled widgets
+import pandas as pd                       # For data processing
+import joblib                             # For loading saved model
+import csv                                # For writing to CSV
+import os                                 # For file operations
+import matplotlib.pyplot as plt           # For plotting prediction history
+
+# Load the pre-trained insurance cost prediction model
+try:
+    model = joblib.load("insurance_model.pkl")
+except FileNotFoundError:
+    messagebox.showerror("Model Error", "Trained model file not found. Please train the model first.")
+    exit()
+
+# Create header row in CSV file if it doesn't exist
+def write_csv_header_if_needed():
+    if not os.path.exists("user_predictions.csv"):
+        with open("user_predictions.csv", mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Age", "Sex", "BMI", "Children", "Smoker", "Region", "Predicted Cost"])
+
+# Predict insurance cost based on input fields and save result
 def predict():
     try:
+        # Get input from GUI
         age = int(entry_age.get())
         bmi = float(entry_bmi.get())
         children = int(entry_children.get())
@@ -26,7 +54,7 @@ def predict():
         smoker = var_smoker.get()
         region = var_region.get()
 
-
+        # Encode categorical values into the model's expected input format
         input_dict = {
             'age': [age],
             'bmi': [bmi],
@@ -39,45 +67,128 @@ def predict():
         }
         input_df = pd.DataFrame(input_dict)
 
-        prediction = model.predict(input_df)[0]
-        messagebox.showinfo("预测结果(Predict the outcome)", f"预测保险费用为(Forecast the cost of insurance)：${prediction:.2f}")
+        raw_prediction = model.predict(input_df)[0]
+        prediction = abs(raw_prediction)
 
+        # Show prediction result in popup
+        messagebox.showinfo("Prediction Result", f"Predicted Insurance Cost: ${prediction:.2f}")
+
+        # Save prediction to CSV
+        write_csv_header_if_needed()
         with open("user_predictions.csv", mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([age, sex, bmi, children, smoker, region, prediction])
+            writer.writerow([age, sex, bmi, children, smoker, region, f"{prediction:.2f}"])
 
     except Exception as e:
-        messagebox.showerror("错误(False)", f"输入错误(False Input)：{e}")
+        messagebox.showerror("Error", f"Invalid input: {e}")
 
+# Clear all input fields to default
+def clear_inputs():
+    entry_age.delete(0, tk.END)
+    entry_bmi.delete(0, tk.END)
+    entry_children.delete(0, tk.END)
+    var_sex.set("male")
+    var_smoker.set("no")
+    var_region.set("northeast")
 
-root = tk.Tk()
-root.title("健康保险费用预测器(Health Insurance Cost Predictor)")
+# Exit the application
+def exit_app():
+    root.destroy()
 
-tk.Label(root, text="年龄（age）").grid(row=0, column=0)
-entry_age = tk.Entry(root)
-entry_age.grid(row=0, column=1)
+# Open CSV file in default application
+def open_csv():
+    if os.path.exists("user_predictions.csv"):
+        os.startfile("user_predictions.csv")
+    else:
+        messagebox.showwarning("File Not Found", "No prediction file found yet.")
 
-tk.Label(root, text="BMI").grid(row=1, column=0)
-entry_bmi = tk.Entry(root)
-entry_bmi.grid(row=1, column=1)
+# Show the most recent prediction result from CSV
+def show_recent_prediction():
+    try:
+        df = pd.read_csv("user_predictions.csv")
+        last_row = df.iloc[-1]
+        result = (f"Last Prediction:\nAge: {last_row['Age']}, Sex: {last_row['Sex']}, "
+                  f"BMI: {last_row['BMI']}, Children: {last_row['Children']},\n"
+                  f"Smoker: {last_row['Smoker']}, Region: {last_row['Region']}, "
+                  f"Cost: ${last_row['Predicted Cost']}")
+        messagebox.showinfo("Latest Prediction", result)
+    except Exception:
+        messagebox.showinfo("No Data", "No prediction data available.")
 
-tk.Label(root, text="子女数量（numbers of children）").grid(row=2, column=0)
-entry_children = tk.Entry(root)
-entry_children.grid(row=2, column=1)
+# Display historical predictions in a chart
+def show_chart():
+    try:
+        df = pd.read_csv("user_predictions.csv")
+        plt.figure(figsize=(8, 4))
+        plt.plot(df["Predicted Cost"], marker='o', linestyle='-')
+        plt.title("Prediction History")
+        plt.xlabel("Prediction #")
+        plt.ylabel("Insurance Cost ($)")
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+    except Exception:
+        messagebox.showinfo("No Data", "No prediction data to plot.")
 
-tk.Label(root, text="性别（sex）").grid(row=3, column=0)
-var_sex = tk.StringVar(value="male")
-tk.OptionMenu(root, var_sex, "male", "female").grid(row=3, column=1)
+# Build GUI layout and widgets
+def create_gui():
+    global root
+    root = tk.Tk()
+    root.title("Health Insurance Cost Predictor")
+    root.configure(bg="#fffacd")  # Light yellow background
+    root.geometry("420x400")
+    root.resizable(False, False)
 
-tk.Label(root, text="是否吸烟（smoke）").grid(row=4, column=0)
-var_smoker = tk.StringVar(value="no")
-tk.OptionMenu(root, var_smoker, "yes", "no").grid(row=4, column=1)
+    # Define style for ttk widgets
+    style = ttk.Style()
+    style.configure("TLabel", font=("Segoe UI", 10), background="#fffacd")
+    style.configure("TButton", font=("Segoe UI", 10, "bold"))
+    style.configure("TCombobox", font=("Segoe UI", 10))
 
-tk.Label(root, text="地区（region）").grid(row=5, column=0)
-var_region = tk.StringVar(value="northeast")
-tk.OptionMenu(root, var_region, "northeast", "northwest", "southeast", "southwest").grid(row=5, column=1)
+    # Input: Age
+    ttk.Label(root, text="Age:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
+    global entry_age
+    entry_age = ttk.Entry(root)
+    entry_age.grid(row=0, column=1, padx=10)
 
-tk.Button(root, text="预测（predict）", command=predict).grid(row=6, columnspan=2, pady=10)
+    # Input: BMI
+    ttk.Label(root, text="BMI:").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+    global entry_bmi
+    entry_bmi = ttk.Entry(root)
+    entry_bmi.grid(row=1, column=1, padx=10)
 
-root.mainloop()
+    # Input: Number of Children
+    ttk.Label(root, text="Number of Children:").grid(row=2, column=0, padx=10, pady=10, sticky="e")
+    global entry_children
+    entry_children = ttk.Entry(root)
+    entry_children.grid(row=2, column=1, padx=10)
+
+    # Input: Sex
+    ttk.Label(root, text="Sex:").grid(row=3, column=0, padx=10, pady=10, sticky="e")
+    global var_sex
+    var_sex = tk.StringVar(value="male")
+    ttk.Combobox(root, textvariable=var_sex, values=["male", "female"], state="readonly").grid(row=3, column=1, padx=10)
+
+    # Input: Smoker
+    ttk.Label(root, text="Smoker:").grid(row=4, column=0, padx=10, pady=10, sticky="e")
+    global var_smoker
+    var_smoker = tk.StringVar(value="no")
+    ttk.Combobox(root, textvariable=var_smoker, values=["yes", "no"], state="readonly").grid(row=4, column=1, padx=10)
+
+    # Input: Region
+    ttk.Label(root, text="Region:").grid(row=5, column=0, padx=10, pady=10, sticky="e")
+    global var_region
+    var_region = tk.StringVar(value="northeast")
+    ttk.Combobox(root, textvariable=var_region, values=["northeast", "northwest", "southeast", "southwest"], state="readonly").grid(row=5, column=1, padx=10)
+    # Buttons
+    ttk.Button(root, text="Predict", command=predict).grid(row=6, column=0, columnspan=2, pady=10)
+    ttk.Button(root, text="Clear", command=clear_inputs).grid(row=7, column=0, pady=5)
+    ttk.Button(root, text="Exit", command=exit_app).grid(row=7, column=1, pady=5)
+    ttk.Button(root, text="Open CSV", command=open_csv).grid(row=8, column=0, pady=5)
+    ttk.Button(root, text="Last Prediction", command=show_recent_prediction).grid(row=8, column=1, pady=5)
+    ttk.Button(root, text="Show Chart", command=show_chart).grid(row=9, column=0, columnspan=2, pady=10)
+    root.mainloop()
+# Start the GUI application
+if __name__ == "__main__":
+    create_gui()
 
