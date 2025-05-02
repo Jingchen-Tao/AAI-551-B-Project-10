@@ -3,7 +3,7 @@
 
 # Description:
 # A GUI to predict health insurance cost using a trained ML model, with CSV logging,
-# visual history, logo, and PDF export functionality.
+# visual history, logo, PDF export, and theme toggle functionality.
 
 import tkinter as tk
 from tkinter import messagebox, ttk, filedialog
@@ -13,7 +13,7 @@ import csv
 import os
 import matplotlib.pyplot as plt
 from PIL import Image, ImageTk
-from reportlab.pdfgen import canvas  # ← For PDF export
+from reportlab.pdfgen import canvas
 
 # Load the pre-trained model
 try:
@@ -21,6 +21,8 @@ try:
 except FileNotFoundError:
     messagebox.showerror("Model Error", "Trained model file not found. Please train the model first.")
     exit()
+
+dark_mode = False  # ← Global toggle flag
 
 def write_csv_header_if_needed():
     if not os.path.exists("user_predictions.csv"):
@@ -105,7 +107,6 @@ def show_chart():
     except Exception:
         messagebox.showinfo("No Data", "No prediction data to plot.")
 
-# 🔽 New: Save last prediction as PDF
 def save_as_pdf():
     try:
         df = pd.read_csv("user_predictions.csv")
@@ -135,12 +136,23 @@ def save_as_pdf():
     except Exception as e:
         messagebox.showerror("Error", f"Could not save PDF: {e}")
 
+def toggle_theme():
+    global dark_mode
+    dark_mode = not dark_mode
+    bg_color = "#2e2e2e" if dark_mode else "#fffacd"
+    fg_color = "#ffffff" if dark_mode else "#000000"
+
+    root.configure(bg=bg_color)
+    style.configure("TLabel", background=bg_color, foreground=fg_color)
+    style.configure("TButton", foreground=fg_color)
+    style.configure("TCombobox", foreground=fg_color)
+
 def create_gui():
-    global root
+    global root, style
     root = tk.Tk()
     root.title("Health Insurance Cost Predictor")
     root.configure(bg="#fffacd")
-    root.geometry("420x550")
+    root.geometry("420x580")
     root.resizable(False, False)
 
     style = ttk.Style()
@@ -197,13 +209,14 @@ def create_gui():
     ttk.Button(root, text="Open CSV", command=open_csv).grid(row=9, column=0, pady=5)
     ttk.Button(root, text="Last Prediction", command=show_recent_prediction).grid(row=9, column=1, pady=5)
     ttk.Button(root, text="Show Chart", command=show_chart).grid(row=10, column=0, columnspan=2, pady=5)
-    ttk.Button(root, text="Save as PDF", command=save_as_pdf).grid(row=11, column=0, columnspan=2, pady=10)
+    ttk.Button(root, text="Save as PDF", command=save_as_pdf).grid(row=11, column=0, columnspan=2, pady=5)
+    ttk.Button(root, text="Toggle Theme", command=toggle_theme).grid(row=12, column=0, columnspan=2, pady=10)
 
     root.mainloop()
 
 if __name__ == "__main__":
     create_gui()
 
-    
+      
    
 
